@@ -4,15 +4,42 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/store/cartStore'
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react'
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Tag, Check } from 'lucide-react'
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCartStore()
-  const [checkoutStep, setCheckoutStep] = useState(1)
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [couponError, setCouponError] = useState('')
 
   const total = getCartTotal()
   const shipping = total > 199 ? 0 : 10
-  const finalTotal = total + shipping
+  
+  // Apply coupon discount
+  let discount = 0
+  if (appliedCoupon) {
+    if (appliedCoupon.type === 'percent') {
+      discount = total * (appliedCoupon.value / 100)
+    } else if (appliedCoupon.type === 'discount') {
+      discount = appliedCoupon.value
+    } else if (appliedCoupon.type === 'shipping') {
+      discount = shipping
+    }
+  }
+  
+  const finalTotal = total + shipping - discount
+
+  const applyCoupon = () => {
+    setCouponError('')
+    // Mock coupon validation
+    if (couponCode.toUpperCase() === 'NEW50' && total >= 200) {
+      setAppliedCoupon({ type: 'discount', value: 50, code: 'NEW50' })
+    } else if (couponCode.toUpperCase() === 'SPRING20' && total >= 100) {
+      setAppliedCoupon({ type: 'percent', value: 20, code: 'SPRING20' })
+    } else {
+      setCouponError('优惠券无效或不满足使用条件')
+    }
+  }
 
   if (cart.length === 0) {
     return (
@@ -40,17 +67,21 @@ export default function CartPage() {
           <div className="lg:col-span-2 space-y-4">
             {cart.map((item) => (
               <div key={item.id} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4">
-                <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                  <Image
-                    src={item.images?.[0] || '/products/placeholder.jpg'}
-                    alt={item.name}
-                    width={96}
-                    height={96}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <Link href={`/products/${item.id}`}>
+                  <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
+                    <Image
+                      src={item.images?.[0] || '/products/placeholder.jpg'}
+                      alt={item.name}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </Link>
                 <div className="flex-1">
-                  <h3 className="font-semibold mb-1">{item.name}</h3>
+                  <Link href={`/products/${item.id}`}>
+                    <h3 className="font-semibold mb-1 hover:text-rose-500">{item.name}</h3>
+                  </Link>
                   <p className="text-rose-500 font-bold">¥{item.price}</p>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-2">
@@ -76,6 +107,9 @@ export default function CartPage() {
                     </button>
                   </div>
                 </div>
+                <div className="text-right">
+                  <p className="font-bold">¥{(item.price * item.quantity).toFixed(2)}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -85,11 +119,54 @@ export default function CartPage() {
             <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-24">
               <h2 className="text-xl font-bold mb-4">订单摘要</h2>
               
+              {/* Coupon */}
+              {!appliedCoupon ? (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">使用优惠券</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="输入优惠码"
+                      className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                    />
+                    <button
+                      onClick={applyCoupon}
+                      className="px-4 py-2 bg-rose-500 text-white rounded-lg text-sm hover:bg-rose-600"
+                    >
+                      使用
+                    </button>
+                  </div>
+                  {couponError && <p className="text-red-500 text-xs mt-1">{couponError}</p>}
+                  <p className="text-xs text-gray-400 mt-1">试试: NEW50, SPRING20</p>
+                </div>
+              ) : (
+                <div className="mb-4 p-3 bg-green-50 rounded-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-500" />
+                    <span className="text-sm font-medium text-green-700">{appliedCoupon.code}</span>
+                  </div>
+                  <button
+                    onClick={() => setAppliedCoupon(null)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    取消
+                  </button>
+                </div>
+              )}
+
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-500">商品小计</span>
                   <span>¥{total.toFixed(2)}</span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-500">
+                    <span>优惠券</span>
+                    <span>-¥{discount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-gray-500">运费</span>
                   <span>{shipping === 0 ? '免运费' : `¥${shipping}`}</span>
