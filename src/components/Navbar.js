@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, User, Menu, X, Search, Close } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Search, Close, Heart } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import { products } from '@/data/products'
 
@@ -14,6 +14,7 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState([])
   const searchRef = useRef(null)
   const { cart } = useCartStore()
+  const [wishlistCount, setWishlistCount] = useState(0)
   
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -23,6 +24,11 @@ export default function Navbar() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]')
+    setWishlistCount(wishlist.length)
   }, [])
 
   useEffect(() => {
@@ -133,7 +139,15 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <Link href="/login" className="p-2 hover:bg-gray-100 rounded-full transition hidden sm:block">
+            <Link href="/wishlist" className="p-2 hover:bg-gray-100 rounded-full transition relative">
+              <Heart className="w-5 h-5 text-gray-700" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+            <Link href="/account" className="p-2 hover:bg-gray-100 rounded-full transition hidden sm:block">
               <User className="w-5 h-5 text-gray-700" />
             </Link>
             
