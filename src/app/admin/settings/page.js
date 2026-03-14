@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Save, Store, Mail, Phone, MapPin, Clock, SocialMedia, Seo, Payment } from 'lucide-react'
+import { Save, Store, Mail, Phone, MapPin, Clock, Globe, Search, CreditCard } from 'lucide-react'
 
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState('general')
@@ -44,9 +44,9 @@ export default function AdminSettingsPage() {
   const tabs = [
     { id: 'general', name: '基本设置', icon: Store },
     { id: 'contact', name: '联系方式', icon: Phone },
-    { id: 'social', name: '社交媒体', icon: SocialMedia },
-    { id: 'order', name: '订单设置', icon: Payment },
-    { id: 'seo', name: 'SEO设置', icon: Seo },
+    { id: 'social', name: '社交媒体', icon: Globe },
+    { id: 'order', name: '订单设置', icon: CreditCard },
+    { id: 'seo', name: 'SEO设置', icon: Search },
   ]
 
   return (
