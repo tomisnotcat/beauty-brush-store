@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut, Menu, X, ChevronLeft, Image, Star } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut, Menu, X, ChevronLeft, Image, Star, PackageCheck } from 'lucide-react'
 
 const menuItems = [
   { name: '仪表盘', href: '/admin', icon: LayoutDashboard },
   { name: '产品管理', href: '/admin/products', icon: Package },
+  { name: '库存管理', href: '/admin/inventory', icon: PackageCheck },
   { name: '订单管理', href: '/admin/orders', icon: ShoppingCart },
   { name: '客户管理', href: '/admin/customers', icon: Users },
   { name: '评价管理', href: '/admin/reviews', icon: Star },
