@@ -12,11 +12,7 @@ export const metadata = {
   keywords: '化妆刷, 美妆工具, 专业化妆刷, 美容工具',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <body className={inter.className}>
