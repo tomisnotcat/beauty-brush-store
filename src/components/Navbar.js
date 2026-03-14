@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, User, Menu, X, Search, Close, Heart } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Search, Heart } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import { products } from '@/data/products'
 
@@ -91,7 +91,7 @@ export default function Navbar() {
                 className="p-2 hover:bg-gray-100 rounded-full transition"
                 onClick={() => setSearchOpen(!searchOpen)}
               >
-                {searchOpen ? <Close className="w-5 h-5 text-gray-700" /> : <Search className="w-5 h-5 text-gray-700" />}
+                {searchOpen ? <X className="w-5 h-5 text-gray-700" /> : <Search className="w-5 h-5 text-gray-700" />}
               </button>
               
               {searchOpen && (
