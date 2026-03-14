@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut, Menu, X, ChevronLeft, Image, Star, PackageCheck } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut, Menu, X, ChevronLeft, Image, Star, PackageCheck, Tag } from 'lucide-react'
 
 const menuItems = [
   { name: '仪表盘', href: '/admin', icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const menuItems = [
   { name: '库存管理', href: '/admin/inventory', icon: PackageCheck },
   { name: '订单管理', href: '/admin/orders', icon: ShoppingCart },
   { name: '客户管理', href: '/admin/customers', icon: Users },
+  { name: '优惠券管理', href: '/admin/coupons', icon: Tag },
   { name: '评价管理', href: '/admin/reviews', icon: Star },
   { name: '横幅管理', href: '/admin/banners', icon: Image },
   { name: '数据分析', href: '/admin/analytics', icon: BarChart3 },
