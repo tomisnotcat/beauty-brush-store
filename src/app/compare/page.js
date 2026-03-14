@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { products } from '@/data/products'
-import { Compare, X, Check } from 'lucide-react'
+import { Scale, X, Check } from 'lucide-react'
 
 export default function ComparePage() {
   const [compareList, setCompareList] = useState([])
@@ -23,7 +23,7 @@ export default function ComparePage() {
     return (
       <div className="min-h-screen pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <Compare className="w-24 h-24 text-gray-300 mx-auto mb-6" />
+          <Scale className="w-24 h-24 text-gray-300 mx-auto mb-6" />
           <h2 className="text-2xl font-bold mb-4">产品比较</h2>
           <p className="text-gray-500 mb-8">选择产品进行对比</p>
           

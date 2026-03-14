@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Gift, Clock, Hot, Calendar } from 'lucide-react'
+import { Gift, Clock, Flame, Calendar } from 'lucide-react'
 
 export default function PromotionsPage() {
   const [activeTab, setActiveTab] = useState('active')
@@ -77,7 +77,7 @@ export default function PromotionsPage() {
         {/* Tabs */}
         <div className="flex justify-center gap-4 mb-8">
           {[
-            { id: 'active', name: '进行中', icon: Hot },
+            { id: 'active', name: '进行中', icon: Flame },
             { id: 'upcoming', name: '即将开始', icon: Calendar },
             { id: 'expired', name: '已结束', icon: Gift },
           ].map(tab => (
