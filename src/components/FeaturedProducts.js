@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { products } from '@/data/products'
 import { useCartStore } from '@/store/cartStore'
-import { ShoppingCart, Heart, Eye } from 'lucide-react'
+import { ShoppingCart, Heart } from 'lucide-react'
 import { useState } from 'react'
 
 export default function FeaturedProducts() {
@@ -33,41 +33,33 @@ export default function FeaturedProducts() {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             {/* Image */}
-            <div className="relative h-64 bg-gray-100 overflow-hidden">
-              <Image
-                src={product.images[0] || '/products/placeholder.jpg'}
-                alt={product.name}
-                fill
-                className="object-cover transition-transform duration-300 hover:scale-110"
-              />
-              
-              {/* Badges */}
-              <div className="absolute top-3 left-3 flex flex-col gap-2">
-                {product.tags?.map(tag => (
-                  <span key={tag} className="px-2 py-1 bg-rose-500 text-white text-xs rounded-full">
-                    {tag}
-                  </span>
-                ))}
+            <Link href={`/products/${product.id}`}>
+              <div className="relative h-64 bg-gray-100 overflow-hidden">
+                <Image
+                  src={product.images[0] || '/products/placeholder.jpg'}
+                  alt={product.name}
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-110"
+                />
+                
+                {/* Badges */}
+                <div className="absolute top-3 left-3 flex flex-col gap-2">
+                  {product.tags?.map(tag => (
+                    <span key={tag} className="px-2 py-1 bg-rose-500 text-white text-xs rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-
-              {/* Hover Actions */}
-              <div className={`absolute inset-0 bg-black/40 flex items-center justify-center gap-3 transition-opacity duration-300 ${
-                hoveredId === product.id ? 'opacity-100' : 'opacity-0'
-              }`}>
-                <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition">
-                  <Eye className="w-5 h-5" />
-                </button>
-                <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition">
-                  <Heart className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            </Link>
 
             {/* Content */}
             <div className="p-4">
-              <h3 className="font-semibold text-gray-800 mb-2 line-clamp-1">
-                {product.name}
-              </h3>
+              <Link href={`/products/${product.id}`}>
+                <h3 className="font-semibold text-gray-800 mb-2 line-clamp-1 hover:text-rose-500 transition">
+                  {product.name}
+                </h3>
+              </Link>
               <p className="text-gray-500 text-sm mb-3 line-clamp-2">
                 {product.description}
               </p>

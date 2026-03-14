@@ -1,13 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, User, Menu, X, Search } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Search, Close } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
+import { products } from '@/data/products'
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const searchRef = useRef(null)
   const { cart } = useCartStore()
   
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -18,6 +23,28 @@ export default function Navbar() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      const results = products.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5)
+      setSearchResults(results)
+    } else {
+      setSearchResults([])
+    }
+  }, [searchQuery])
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   return (
@@ -51,10 +78,53 @@ export default function Navbar() {
           </div>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-full transition">
-              <Search className="w-5 h-5 text-gray-700" />
-            </button>
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* Search */}
+            <div className="relative" ref={searchRef}>
+              <button 
+                className="p-2 hover:bg-gray-100 rounded-full transition"
+                onClick={() => setSearchOpen(!searchOpen)}
+              >
+                {searchOpen ? <Close className="w-5 h-5 text-gray-700" /> : <Search className="w-5 h-5 text-gray-700" />}
+              </button>
+              
+              {searchOpen && (
+                <div className="absolute right-0 top-full mt-2 w-72 md:w-80 bg-white rounded-xl shadow-lg overflow-hidden">
+                  <input
+                    type="text"
+                    placeholder="搜索产品..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-4 py-3 border-b focus:outline-none"
+                    autoFocus
+                  />
+                  {searchResults.length > 0 && (
+                    <div className="max-h-64 overflow-y-auto">
+                      {searchResults.map(p => (
+                        <Link
+                          key={p.id}
+                          href={`/products/${p.id}`}
+                          onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                          className="flex items-center gap-3 p-3 hover:bg-gray-50"
+                        >
+                          <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src={p.images[0] || '/products/placeholder.jpg'} alt={p.name} className="w-full h-full object-cover" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm line-clamp-1">{p.name}</p>
+                            <p className="text-rose-500 text-sm">¥{p.price}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {searchQuery.length > 0 && searchResults.length === 0 && (
+                    <div className="p-4 text-center text-gray-500 text-sm">未找到相关产品</div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-full transition relative">
               <ShoppingCart className="w-5 h-5 text-gray-700" />
               {cartCount > 0 && (
@@ -63,7 +133,7 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <Link href="/login" className="p-2 hover:bg-gray-100 rounded-full transition">
+            <Link href="/login" className="p-2 hover:bg-gray-100 rounded-full transition hidden sm:block">
               <User className="w-5 h-5 text-gray-700" />
             </Link>
             
