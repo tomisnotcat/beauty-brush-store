@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useCartStore } from '@/store/cartStore'
 import { useRouter } from 'next/navigation'
+import StripeCheckout from '@/components/StripeCheckout'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -121,6 +122,17 @@ export default function CheckoutPage() {
                 />
                 <span>支付宝</span>
               </label>
+              <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:border-rose-500">
+                <input
+                  type="radio"
+                  name="payment"
+                  value="stripe"
+                  checked={formData.paymentMethod === 'stripe'}
+                  onChange={(e) => setFormData({...formData, paymentMethod: e.target.value})}
+                  className="mr-3"
+                />
+                <span>银行卡支付 (Stripe)</span>
+              </label>
             </div>
           </div>
 
@@ -143,13 +155,23 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full justify-center"
-          >
-            {loading ? '提交中...' : '提交订单'}
-          </button>
+          {formData.paymentMethod === 'stripe' ? (
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Stripe 支付</h2>
+              <StripeCheckout 
+                items={cart} 
+                customer={{ name: formData.name, email: formData.phone + '@placeholder.com' }}
+              />
+            </div>
+          ) : (
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-rose-500 text-white rounded-xl hover:bg-rose-600 disabled:opacity-50 transition"
+            >
+              {loading ? '提交中...' : '提交订单'}
+            </button>
+          )}
         </form>
       </div>
     </div>
